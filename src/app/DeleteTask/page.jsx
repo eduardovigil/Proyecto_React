@@ -3,15 +3,13 @@ import { useContext, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../AuthContext";
 
-const DeleteTask = ({ projectId, taskId}) => {
+const DeleteTask = ({ taskId}) => {
     const { token } = useContext(AuthContext);
     const [error , setError] = useState(null);
 
     const handleDeleteTask = async () => {
         try {
-            const response = await axios.delete(`/projects/${projectId}/tasks/${
-                taskId
-                }`, {
+            const response = await axios.delete(`/api/tasks/${taskId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

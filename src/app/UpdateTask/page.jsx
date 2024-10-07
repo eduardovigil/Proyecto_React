@@ -3,7 +3,7 @@ import { useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "./AuthContext";
 
-const UpdateTask = ({projectId, TaskId}) => {
+const UpdateTask = ({ TaskId}) => {
     const [task, setTask] = useState({name: '', description: ''});
     const { token } = useContext(AuthContext);
     const [error, setError] = useState(null);
