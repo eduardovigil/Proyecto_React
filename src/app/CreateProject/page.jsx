@@ -1,42 +1,57 @@
 "use client";
-import { useState, useContext } from "react/cjs/react.production.min";
+import { useState, useContext } from "react";
 import { AuthContext } from "../AuthContext";
 import axios from 'axios';
+import { useRouter } from "next/navigation";
 
 const CreateProject = () => {
     const [name, setName ] = useState('');
     const [description, setDescription] = useState('');
     const [complete, setComplete] = useState(null);
     const [error, setError] = useState(null);
-    const { authToken } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
+    const { token } = useContext(AuthContext);
+    const router = useRouter();
+
+    console.log(user, token);
 
     const handleCreateProject  = async (e) => {
         e.preventDefault();
+        
+        if(!token){
+            router.push('/login');
+            return;
+        }
+        if(!name || !description){
+            setError('Please fill in all fields');
+            return;
+        }
         try {
             const response = await axios.post('/api/project',
                 {
                     name,
                     description,
-                    complete
+                    complete,
+                    user: user.id
                 },
                 {headers:
                     {
-                        'Authorization': `Bearer ${authToken}`
+                        'Authorization': `Bearer ${token}`
                     }
                 });
-            const data = await response.json();
-            if(response.ok){
-                console.log(data);
-            }else{
-                setError(data.error);
+            if(response.status === 200){
+                console.log(response.data);
+                router.push('/Projects');
+            } else {
+                setError('Failed to create project');
             }
         } catch (error) {
             setError(error.message);
         }
     };
-    if(!authToken){
-        return <p>No estas Autenticado</p>
-    }
+    const handleProject = () => {
+        router.push('/Projects');
+    };
     return(
         <div>
         <h1>Crear Proyecto</h1>
@@ -54,8 +69,18 @@ const CreateProject = () => {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Descripcion del proyecto"
           />
+           <label>
+                <input
+                    type="checkbox"
+                    checked={complete}  // Maneja el valor booleano
+                    onChange={(e) => setComplete(e.target.checked)}
+                />
+                Completado
+            </label>
           <button type="submit">Crear Proyecto</button>
         </form>
+
+        <button onClick={handleProject}>Proyectos</button>
       </div>
     );
   };

@@ -9,6 +9,9 @@ const Projects = () => {
     const [projects, setProjects] = useState([]);
     const [ error , setError] = useState(null);
     const router = useRouter();
+    const {user} = useContext(AuthContext);
+
+    console.log(token, user);
 
     useEffect(()=>{
         console.log("token", token);
@@ -23,23 +26,37 @@ const Projects = () => {
                         Authorization: `Bearer ${token}`
                     }
                 })
-                setProjects(response.data);
+                console.log(response.data);
+                setProjects(Array.isArray(response.data.projects) ? response.data.projects : []);
             } catch (error) {
                 setError(error.message);
             }
         };
             fetchProjects();   
     }, [token, router]);
+
+    const handleCreateProject = () => {
+        router.push('/CreateProject');
+    };
    
     return(
         <div>
       <h1>Proyectos</h1>
-      {error && <p>{error}</p>}
+    {error && <p>{error}</p>}
+    {!projects || projects.length === 0 ? (
+      <p>Cargando proyectos...</p>
+    ) : (
       <ul>
         {projects.map((project) => (
-          <li key={project.id}>{project.name}</li>
+          <li key={project.id}>
+            <div>{project.name}</div>
+            <div>{project.description}</div>
+            <div>{project.complete}</div>
+          </li>
         ))}
       </ul>
+    )}
+    <button onClick={handleCreateProject}>Crear Proyecto</button>
     </div>
     );
 };
