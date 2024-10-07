@@ -39,7 +39,7 @@ const Projects = () => {
         router.push('/CreateProject');
     };
     const handleTask = () => {
-        router.push('/tasks');
+        router.push('/TaskList');
     };
     return(
         <div>
