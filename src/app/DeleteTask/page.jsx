@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useState } from "react/cjs/react.production.min";
+import { useContext, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../AuthContext";
 
@@ -9,7 +9,7 @@ const DeleteTask = ({ projectId, taskId}) => {
 
     const handleDeleteTask = async () => {
         try {
-            const response = await axios.delete(`http://localhost:3001/projects/${projectId}/tasks/${
+            const response = await axios.delete(`/projects/${projectId}/tasks/${
                 taskId
                 }`, {
                     headers: {

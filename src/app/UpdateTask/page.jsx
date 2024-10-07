@@ -1,5 +1,5 @@
 "use client";
-import { useState, useContext } from "react/cjs/react.production.min";
+import { useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "./AuthContext";
 
@@ -11,7 +11,7 @@ const UpdateTask = ({projectId, TaskId}) => {
     const handleUpdateTask = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.put(`http://localhost:3001/api/tasks/${TaskId}`,
+            const response = await axios.put(`/api/tasks/${TaskId}`,
                 {name: task.name, description: task.description},
                 {headers: {'Authorization': `Bearer ${token}`}
             });
