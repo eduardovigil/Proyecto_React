@@ -1,4 +1,5 @@
 "use client";
+import axios from 'axios';
 import React, { createContext, useState, useEffect } from 'react';
 
 // Crear el contexto de autenticación
@@ -11,11 +12,29 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Revisar si el token JWT está en el localStorage al cargar la página
     const savetoken = localStorage.getItem('token');
-    const saveUser = JSON.parse(localStorage.getItem('user'));
-    if (savetoken && saveUser) {
+    const saveUser = localStorage.getItem('user');
+    if (savetoken) {
       setAuthToken(savetoken);
-      setUser(saveUser);
       // Opcional: obtener datos de usuario desde la API usando el token
+    }
+    if(saveUser){
+      setUser(JSON.parse(saveUser));
+    }else if(savetoken){
+      const fetchUser = async () => {
+        try {
+          const response = await axios.get('/api/user', {
+            headers: {
+              Authorization: `Bearer ${savetoken}`
+            }
+          });
+          const userData = response.data;
+          setUser(userData);
+          localStorage.setItem('user', JSON.stringify(userData));
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      fetchUser();
     }
   }, []);
 

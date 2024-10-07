@@ -1,24 +1,26 @@
 "use client";
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import { AuthContext } from "./AuthContext";
+import { AuthContext } from "../AuthContext";
+import { useRouter } from "next/navigation";
 
 const CreateTask = ({ projectId }) => {
     const [name, setName ] = useState("");
     const [description, setDescription] = useState("");
     const [error, setError] = useState(null);
-    const {authToken} = useContext(AuthContext);
+    const {token} = useContext(AuthContext);
+    const router = useRouter();
 
     const handleCreateTask = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`/api/projects/${projectId}/tasks`,{
+            const response = await axios.post(`/api/tasks`,{
                 name,
                 description
                 },
                 {
                 headers: {
-                    Authorization: `Bearer ${authToken}`
+                    Authorization: `Bearer ${token}`
                 }
             });
             console.log(response.data);
@@ -26,8 +28,9 @@ const CreateTask = ({ projectId }) => {
             setError(error.message);
         }
     };
-    if(!authToken){
-        return <Redirect to="/login"/>
+    if(!token){
+      router.push('/login');
+        return ;
     }
     return(
         <div>
@@ -48,6 +51,7 @@ const CreateTask = ({ projectId }) => {
           />
           <button type="submit">Crear Tarea</button>
         </form>
+        
       </div>
     );
 };

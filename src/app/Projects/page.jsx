@@ -38,7 +38,9 @@ const Projects = () => {
     const handleCreateProject = () => {
         router.push('/CreateProject');
     };
-   
+    const handleTask = () => {
+        router.push('/tasks');
+    };
     return(
         <div>
       <h1>Proyectos</h1>
@@ -52,6 +54,7 @@ const Projects = () => {
             <div>{project.name}</div>
             <div>{project.description}</div>
             <div>{project.complete}</div>
+            <div><button onClick={handleTask}> Lista de tareas</button></div>
           </li>
         ))}
       </ul>
