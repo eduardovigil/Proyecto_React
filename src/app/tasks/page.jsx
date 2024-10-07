@@ -16,7 +16,8 @@ const CreateTask = ({ projectId }) => {
         try {
             const response = await axios.post(`/api/tasks`,{
                 name,
-                description
+                description,
+                projectId: projectId,
                 },
                 {
                 headers: {
@@ -51,7 +52,7 @@ const CreateTask = ({ projectId }) => {
           />
           <button type="submit">Crear Tarea</button>
         </form>
-        
+
       </div>
     );
 };
