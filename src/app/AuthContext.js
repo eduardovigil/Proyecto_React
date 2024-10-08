@@ -1,60 +1,58 @@
-"use client";
-import axios from 'axios';
-import React, { createContext, useState, useEffect } from 'react';
+'use client';
 
-// Crear el contexto de autenticación
+import React, { createContext, useState, useEffect } from 'react';
+import axios from 'axios';
+
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [token, setAuthToken] = useState(null);
+  const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Revisar si el token JWT está en el localStorage al cargar la página
-    const savetoken = localStorage.getItem('token');
-    const saveUser = localStorage.getItem('user');
-    if (savetoken) {
-      setAuthToken(savetoken);
-      // Opcional: obtener datos de usuario desde la API usando el token
-    }
-    if(saveUser){
-      setUser(JSON.parse(saveUser));
-    }else if(savetoken){
-      const fetchUser = async () => {
+    const storedToken = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+
+    if (storedToken) {
+      setToken(storedToken);
+      if (storedUser) {
         try {
-          const response = await axios.get('/api/user', {
-            headers: {
-              Authorization: `Bearer ${savetoken}`
-            }
-          });
-          const userData = response.data;
-          setUser(userData);
-          localStorage.setItem('user', JSON.stringify(userData));
+          setUser(JSON.parse(storedUser));
         } catch (error) {
-          console.error(error);
+          console.error('Error parsing stored user data:', error);
+          // If there's an error parsing the user data, remove it from localStorage
+          localStorage.removeItem('user');
         }
-      };
-      fetchUser();
+      }
     }
   }, []);
 
-  const login = (token) => {
-    setAuthToken(token);
-    setUser(user);
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', user);
+  const login = async (email, password) => {
+    try {
+      const response = await axios.post('/api/auth/login', { email, password });
+      const { token, user } = response.data;
+      setToken(token);
+      setUser(user);
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
   const logout = () => {
-    setAuthToken(null);
+    setToken(null);
+    setUser(null);
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
   };
 
   return (
-    <AuthContext.Provider value={{user, token, login, logout }}>
-    
+    <AuthContext.Provider value={{ user, token, login, logout }}>
       {children}
     </AuthContext.Provider>
-
   );
 };
+
+export default AuthProvider;

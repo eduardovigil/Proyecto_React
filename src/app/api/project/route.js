@@ -17,13 +17,14 @@ export async function GET(request) {
         });
         return NextResponse.json({projects});
     } catch (error) {
-        return NextResponse.json({message: 'No Autorizado'},{ status: 401 });
+        return NextResponse.json({message: 'No Autorizado'}, { status: 401 });
     }   
 }
+
 export async function POST(request) {
-    const { name, description, complete } = request.body;
     try {
         const user = verifyToken(request);
+        const { name, description, complete } = await request.json();
         const newProject = await prisma.project.create({
             data: {
                 name,
@@ -34,6 +35,6 @@ export async function POST(request) {
         });
         return NextResponse.json(newProject);
     } catch (error) {
-        return NextResponse.json({message: 'Error servidor'},{ status: 500 });
+        return NextResponse.json({message: 'Error en el servidor'}, { status: 500 });
     }
 }

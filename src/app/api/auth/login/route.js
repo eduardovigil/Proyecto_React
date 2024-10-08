@@ -27,9 +27,14 @@ export async function POST(request) {
         return NextResponse.json({error: "Contraseña incorrecta"}, {status: 401});
     }
     const token = generateToken(userFind.id);
+    
+    // Excluir la contraseña del objeto de usuario
+    const { password: _, ...userWithoutPassword } = userFind;
+    
     return NextResponse.json({
         token: token,
-        message: 'Inicio de sesion'
+        user: userWithoutPassword,
+        message: 'Inicio de sesión exitoso'
     },{
         status: 200
     });
